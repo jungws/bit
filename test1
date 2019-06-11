@@ -1,0 +1,85 @@
+
+void get_sub_name(char sub_name[15]);
+int get_exm_cnt();
+float get_exm_rlt(float exm_rlt[10],int exm_cnt);
+float get_total(float exm_rlt[10],int exm_cnt);
+float get_average(float total,int exm_cnt);
+char get_grade(float average);
+int print_result(char sub_name[15],int exm_cnt,float exm_rlt[10],float total,float average,char grade);
+
+int main(void)
+{
+
+
+	char sub_name[15]; /* 과목 이름 */
+	float exm_rlt[10]; /* 시험 점수 */
+	int exm_cnt = 0; /* 시험 회수 */
+	float total; /* 총점 */
+	float average; /* 평균 */
+	char grade; /* 학점 */
+
+
+	get_sub_name(sub_name); /* 과목 이름 */
+	exm_cnt = get_exm_cnt(); /* 시험 회수 */
+	get_exm_rlt(exm_rlt, exm_cnt);/* 시험 점수*/
+	total =  get_total(exm_rlt, exm_cnt); /* 총점 계산 */
+	average = get_average(total, exm_cnt); /* 평균 계산 */
+	grade = get_grade(average); /* 학점을 계산합니다. */
+	print_result(sub_name, exm_cnt, exm_rlt, total, average, grade); /* 모든 결과 */
+
+}
+
+void get_sub_name(char sub_name[15]) {
+	printf("과목의 이름을 입력하세요 : ");
+	scanf("%s",&sub_name[0]);
+}
+
+int get_exm_cnt() {
+	int exm_cnt;
+	printf("시험 횟수를 입력하세요 : ");
+	scanf("%d",&exm_cnt);
+	return exm_cnt;
+}
+
+float get_exm_rlt(float exm_rlt[10], int exm_cnt) {
+	for (int i = 1; i <= exm_cnt; i++) {
+		printf("%d차 시험 점수를 입력하세요 : ", i);
+		scanf("%f", exm_rlt++);
+	}
+}
+
+float get_total(float exm_rlt[10], int exm_cnt){
+	float all = 0;
+	for (int i = 0; i < exm_cnt; i++) {
+		all += exm_rlt[i];
+	}
+	return all;
+}
+
+
+float get_average(float total, int exm_cnt) {
+	float a = total / exm_cnt;
+	return a;
+}
+
+char get_grade(float average){
+	char a;
+	if (average >= 50) a='a';
+	else if (average >= 40) a= 'b';
+	else if (average >= 30) a= 'c';
+	else if (average >= 20) a= 'd';
+	else if (average >= 10) a= 'e';
+	else a='f';
+	return a;
+}
+
+int print_result(char sub_name[15], int exm_cnt, float exm_rlt[10], float total, float average, char grade){
+	printf("------결과------\n");
+	printf("과목명 : %s\n", sub_name);
+	for (int i = 1; i <= exm_cnt; i++) {
+		printf("%d차 시험 점수 : %.1f\n",i,exm_rlt[i-1]);
+	}
+	printf("총점 : %.1f\n",total);
+	printf("평균 : %.1f\n",average);
+	printf("학점 : %c", grade);
+}
