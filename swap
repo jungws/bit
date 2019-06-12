@@ -1,0 +1,64 @@
+#include<stdio.h>
+#pragma warning(disable:4996)
+#include<stdlib.h>
+#include<string.h>
+
+void swap0(int* a, int* b) {
+	int temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+void swap1(int** a, int** b) {
+	int temp = **a;
+	**a = **b;
+	**b = temp;
+}
+
+void swap2(int*** a, int*** b) {
+	int temp = *** a;
+	***a = ***b;
+	***b = temp;
+}
+
+void swap3(int** a, int** b) {
+	int* temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+void swap4(int*** a, int*** b) {
+	int* temp = **a;
+	**a = **b;
+	**b = temp;
+}
+
+void swap5(int*** a, int*** b) {
+	int** temp = *a;
+	*a = *b;
+	*b = temp;
+}
+
+main() {
+	int a = 10;
+	int b = 20;
+	int* ap = &a, * bp = &b;
+	int** app = &ap;
+	int** bpp = &bp;
+
+	printf("a 값은: %d  b 값은 :%d ap 값은 :%d  bp 값은 :%d  app 값은 :%d  bpp 값은 :%d\n", a, b,ap,bp,app,bpp);
+
+	swap0(&a, &b); 
+	printf("%d %d\n", a, b);
+	swap1(&ap, &bp);
+	printf("%d %d\n", a, b);
+	swap2(&app, &bpp);
+	printf("%d %d\n", a, b);
+	swap3(&ap, &bp);
+	printf("%d %d\n", ap, bp);
+	swap4(&app, &bpp);
+	printf("%d %d\n", ap, bp);
+	swap5(&app, &bpp);
+	printf("%d %d\n", app, bpp);
+
+}
