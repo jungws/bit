@@ -1,0 +1,20 @@
+#include<stdio.h>
+#pragma warning(disable:4996)
+#include<stdlib.h>
+#include<string.h>
+
+void put_p(char** p)
+{
+	//abcd의 abcd를 출력하는 여러가지 구문
+	//insert의 sert를 출력하는 여러가지 구문
+	//home의 m을 출력하는 여러가지 구문을 찾으시오.
+	printf("%s\n", p[0]);
+	printf("%s\n", p[1]+2);//*(p+1)+2//&p[1][2]
+	printf("%c\n", p[2][2]);//*(*(p+2)+2)//*(p[2]+2)//(*(p+2))[2]
+	//string 쓰면 줄줄이 나온다
+main()
+{
+	char* p[3] = { "abcd","insert","home" };
+
+	put_p(p);
+}
