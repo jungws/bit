@@ -1,0 +1,19 @@
+void my_strrev(char arr[])
+{
+	char brr[20] = "";
+	int index = 0;
+	while (arr[index++] != '\0');
+	for (int i = index - 2; i >= 0; i--)
+	{
+		brr[index - 2 - i] = arr[i];
+	}
+	strcpy(arr, brr);
+}
+
+
+main()
+{
+	char arr[] = "abcdefghi";
+	my_strrev(arr);
+	puts(arr);//cba가 출력되어야 함.
+}
