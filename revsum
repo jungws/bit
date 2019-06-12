@@ -1,0 +1,24 @@
+#include<stdio.h>
+#pragma warning(disable:4996)
+#include<stdlib.h>
+#include<string.h>
+
+
+int main(int argc,char** argv)
+{	//127 3 입력 시 127과 뒤집은 수(721) 더하
+	int a, b, cnt;
+	char* num = argv[1];
+	cnt = atoi(argv[2]);
+
+	for (int i = 0; i < cnt; i++) {
+		a = atoi(num);
+		b = atoi(strrev(num));
+		printf("  %d\n", a);
+		printf("+ %d\n", b);
+		printf("------\n");
+		printf("  %d\n\n", a + b);
+		itoa(a + b, num, 10);
+	}
+	return 0;
+	
+}
