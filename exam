@@ -1,0 +1,66 @@
+#include<stdio.h>
+#pragma warning(disable:4996)
+#define _CRT_SECURE_NO_WARNING
+
+
+main()
+{
+	int num;
+	int total[100];
+	int rank[100];
+	int sj[100][3] = {""};
+	int sub_a = 0;
+	int sub_b = 0;
+	int sub_c = 0;
+	int ave;
+
+
+	printf("학생수 : ");
+	scanf("%d", &num);
+	
+
+	for (int i = 0; i < num;i++) 
+	{
+		printf("[학생  %d]\n점수(국,영,수) : ", i + 1);
+		scanf("%d %d %d", &sj[i][0], &sj[i][1], &sj[i][2]);
+		total[i] = sj[i][0] + sj[i][1] + sj[i][2];
+		
+
+
+	}
+	
+
+
+	printf("<<<<<<<<<<<<<<<성적처리 결과>>>>>>>>>>>>>>>>>\n");
+	printf("=============================================\n");
+	printf("번호	국어  영어  수학  총점  석차\n");
+	for (int i = 0; i < num; i++)
+	{
+		rank[i] = 1;
+		for (int j = 0; j < num; j++)
+		{
+			if (total[i] < total[j])rank[i]++;
+		}
+		printf("%2d	   %2d   %2d   %2d   %3d   %2d\n", i + 1, sj[i][0], sj[i][1], sj[i][2], total[i],rank[i]);
+
+	}
+	printf("=============================================\n");
+
+	for (int i = 0; i < num; i++)
+	{
+
+		sub_a += sj[i][0];
+		sub_b += sj[i][1];
+		sub_c += sj[i][2];
+		
+	}
+	int a = sub_a / num;
+	int b = sub_b / num;
+	int c = sub_c / num;
+	printf("과목별 평균 %d,%d,%d\n",a,b,c);
+	printf("=============================================\n");
+	ave = (a + b + c) / 3;
+	printf("전체평균 %d\n", ave);
+	printf("=============================================\n");
+
+}
