@@ -1,0 +1,28 @@
+int main()
+{
+	int row, col;
+	int arr[10][10] = {0};
+	int total=0;
+	printf("배열의 행과 열 : ");
+	scanf("%d %d", &col, &row);
+	for (int i = 0; i < col; i++)
+	{
+		for (int j = 0; j < row; j++)
+		{
+			scanf("%d", &arr[i][j]);
+			arr[i][row] += arr[i][j];
+			arr[col][j] += arr[i][j];
+			
+		}total += arr[i][row];
+		
+	}
+	arr[col][row] = total;
+
+	printf("\n배열의 결과\n");
+
+	for (int i = 0; i <= col; i++)
+	{	
+		for (int j = 0; j <= row; j++) printf("%d\t",arr[i][j]);
+		puts("");
+	}
+}
