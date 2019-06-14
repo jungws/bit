@@ -1,0 +1,32 @@
+#include<stdio.h>
+#define _CRT_SECURE_NO_WARNING
+#pragma warning(disable:4996)
+
+
+int main()
+{
+	int kg;
+	int n, m;
+	int total = 10000;
+	int x = -1;
+	int a=0, b=0;
+	scanf("%d", &kg);
+
+
+	
+	for (n = 0; 5 * n <= kg; n++) {
+		for (m = 0; 3 * m <= kg; m++) {
+			if (kg == n * 5+ m * 3)
+			{	
+				if(total>m+n)
+				{
+					total = m + n;
+				}					
+			} 
+			
+		}
+	}
+	if (total == 10000)printf("%d", x);
+	else printf("%d", total);
+	return 0;
+}
