@@ -1,0 +1,15 @@
+#include<stdio.h>
+#define _CRT_SECURE_NO_WARNING
+#pragma warning(disable:4996)
+
+
+//문장 받고 그대로 출력하기
+int main()
+{
+	char c;
+
+	while (scanf("%c", &c) != EOF) printf("%c", c);
+	
+	return 0;
+	
+}
