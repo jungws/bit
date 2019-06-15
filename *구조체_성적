@@ -1,0 +1,35 @@
+struct subject {
+	int subname[5];
+};
+struct sung {
+	char name[10];
+	float avg;
+	struct subject sub;
+};
+
+main()
+{
+	char* sn[] = { "국어","영어","수학" };
+	struct sung man[3];//홍,이,둘
+
+	
+
+	for (int i = 0; i < 3; i++) {
+
+		S("%s", man[i].name);//이름입력
+		man[i].sub.subname[3] = 0;//총점초기화
+		man[i].sub.subname[4] = 1;//rank초기화
+		for (int j = 0; j < 3; j++) {
+			P("%s 점수 입력 : ", sn[j]);
+			S("%d", &man[i].sub.subname[j]);//국영수입력
+			man[i].sub.subname[3] += man[i].sub.subname[j];
+		}
+		man[i].avg = man[i].sub.subname[3] / 3;
+
+	}
+	for (int i = 0; i < 3; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (man[i].avg < man[j].avg) man[i].sub.subname[4]++;//등수를 한칸 밀린다
+		}
+	}
+}
