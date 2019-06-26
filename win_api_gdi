@@ -1,0 +1,238 @@
+#include <windows.h>
+#include <TCHAR.H>
+#include <stdlib.h>
+#include <time.h>
+#include <vector>
+#include <math.h>
+
+using namespace std;
+
+
+#define SZ 10
+#define WM_RANDPAINT WM_APP+1//APP는 프로그램 내부에서 사용하는 걸 권장 0X8001이 WM_RANDPAINT라고 디파인함.
+void PrintKeyString(WPARAM keyCode, LPCTSTR msg)
+{
+	TCHAR buf[500];
+	wsprintf(buf, _T("%s : %d\n"), msg, keyCode);
+	OutputDebugString(buf);
+}
+int GetRandColor()
+{
+	return rand() % 256;
+}
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
+	WPARAM wParam, LPARAM lParam);
+VOID CALLBACK TimerProc(HWND hwnd, UINT iMsg,
+	UINT_PTR id, DWORD interval);
+///////////////////////////////////////////
+struct Pointt
+{
+	int ax;
+	int ay;
+};
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
+	LPSTR lpszCmdLine, int nCmdShow)
+{
+	HWND     hwnd;
+	MSG		 msg;
+	WNDCLASS WndClass;
+	WndClass.style = CS_HREDRAW | CS_VREDRAW;
+	WndClass.lpfnWndProc = WndProc;
+	WndClass.cbClsExtra = 0;
+	WndClass.cbWndExtra = 0;
+	WndClass.hInstance = hInstance;
+	WndClass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	WndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	WndClass.hbrBackground = (HBRUSH)GetStockObject(WHITE_BRUSH);
+	WndClass.lpszMenuName = NULL;
+	WndClass.lpszClassName = _T("Window Class Name");
+	RegisterClass(&WndClass);
+	hwnd = CreateWindow(_T("Window Class Name"),
+		_T("Window Title Name"),
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		NULL,
+		NULL,
+		hInstance,
+		NULL
+	);
+	ShowWindow(hwnd, nCmdShow);
+	UpdateWindow(hwnd);
+	while (GetMessage(&msg, NULL, 0, 0))
+	{
+		//TranslateMessage(&msg);//키다운메세지가 들어온 다음 키값이 문자인지 확인 후 문자이면 char메세지로 바꾼다.
+		DispatchMessage(&msg);
+	}
+	return (int)msg.wParam;
+}
+LRESULT CALLBACK WndProc(HWND hwnd, UINT iMsg,
+	WPARAM wParam, LPARAM lParam)
+{
+	HDC hdc;
+	PAINTSTRUCT ps;
+	HBRUSH hNewBrush, hOldBrush;
+	static Pointt pt;
+	static vector<Pointt> ptList;
+	static COLORREF bkColor = 0x00f0f000;//ABGR인데 A는 명암
+	static POINT ptCircle = { 0 };
+	static RECT rtRand;
+	static COLORREF rtColor;
+	static RECT rt;
+	static int a = 5;
+	static int b = 5;
+	static int way = 0;
+	switch (iMsg)
+	{
+	case WM_KEYDOWN:
+		switch (wParam)
+		{
+		case VK_LEFT:
+			ptCircle.x -= 5;
+
+			break;
+		case VK_RIGHT:
+			ptCircle.x += 5;
+
+			break;
+		case VK_UP:
+			ptCircle.y -= 5;
+
+			break;
+		case VK_DOWN:
+			ptCircle.y += 5;
+
+			break;
+		}
+		InvalidateRect(hwnd, NULL, FALSE);//TRUE는 이전거 삭제, FALSE는 남김
+		break;
+	case WM_CREATE:
+
+		GetClientRect(hwnd, &rt);
+
+		srand(GetTickCount());//프로그램시작할때마다 랜덤값바뀌게 해놓고, create에 넣어준다.
+		ptCircle.x = rt.right / 2;
+		ptCircle.y = rt.bottom / 2;
+		way = rand() % 8;
+		SetTimer(hwnd, 10, 10, NULL);
+		SetTimer(hwnd, 20, 100, TimerProc); //0.1초마다 깜빡임, 4번째 인수는 그시간이 되면 프로시져를 호출하게 만듦, 타이머 프록 만들어야함
+		SetTimer(hwnd, 21, 100, TimerProc);
+
+
+		break;
+	case WM_RANDPAINT:
+		rtColor = wParam;
+		rtRand = *(RECT*)lParam;
+		InvalidateRect(hwnd, NULL, TRUE);
+
+		break;
+	case WM_TIMER:
+		GetClientRect(hwnd, &rt);
+		switch (wParam)
+		{
+
+		case 10: //0.3초 타이머, wparam=10은 enable이다.
+			bkColor = RGB(GetRandColor(), GetRandColor(), GetRandColor());//0.3초간은 다른색이고 0.3초 후엔 빨간색이 됨.
+			if (ptCircle.x >= rt.right - 10 || 10 >= ptCircle.x)
+				a = a * (-1);
+			if (ptCircle.y >= rt.bottom - 10 || 10 >= ptCircle.y)
+				b = b * (-1);
+
+			switch (way)
+			{
+			case 0:
+				ptCircle.x += a;
+				break;
+			case 1:
+				ptCircle.x -= a;
+				break;
+			case 2:
+				ptCircle.y += b;
+				break;
+			case 3:
+				ptCircle.y -= b;
+				break;
+			case 4:
+				ptCircle.x += a;
+				ptCircle.y += b;
+				break;
+			case 5:
+				ptCircle.x += a;
+				ptCircle.y -= b;
+				break;
+			case 6:
+				ptCircle.x -= a;
+				ptCircle.y += b;
+				break;
+			case 7:
+				ptCircle.x -= a;
+				ptCircle.y -= b;
+				break;
+			default: break;
+			}
+
+			InvalidateRect(hwnd, NULL, TRUE);
+			break;
+		}
+	case WM_PAINT:
+		hdc = BeginPaint(hwnd, &ps);
+		hNewBrush = CreateSolidBrush(rtColor);
+		hOldBrush = (HBRUSH)SelectObject(hdc, hNewBrush);
+		//Rectangle(hdc, rtRand.left, rtRand.top, rtRand.right, rtRand.bottom);
+		SelectObject(hdc, hOldBrush);
+		DeleteObject(hNewBrush);
+
+		hNewBrush = CreateSolidBrush(bkColor);
+		hOldBrush = (HBRUSH)SelectObject(hdc, hNewBrush);
+		for (vector<int>::size_type i = 0; i < ptList.size(); ++i) {
+			if (abs(ptCircle.x - ptList[i].ax) < 20) a = a * (-1);
+			if (abs(ptCircle.y - ptList[i].ay) < 20) b = b * (-1);
+			Ellipse(hdc, ptList[i].ax - 10, ptList[i].ay - 10, ptList[i].ax + 10, ptList[i].ay + 10);
+
+		}
+			Ellipse(hdc, ptCircle.x - SZ, ptCircle.y - SZ, ptCircle.x + SZ, ptCircle.y + SZ);
+
+		
+		SelectObject(hdc, hOldBrush);
+		DeleteObject(hNewBrush);//hnewbrush와 짝을 이룬다.
+		EndPaint(hwnd, &ps);
+		break;
+	case WM_LBUTTONDOWN:
+		pt.ax = LOWORD(lParam);
+		pt.ay = HIWORD(lParam);
+		hdc = GetDC(hwnd);
+		ptList.push_back(pt);
+		//ReleaseDC(hwnd, hdc);
+
+		InvalidateRect(hwnd, NULL, TRUE);
+		break;
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		break;
+	}
+	return DefWindowProc(hwnd, iMsg, wParam, lParam);
+}
+VOID CALLBACK TimerProc(HWND hwnd, UINT iMsg,
+	UINT_PTR id, DWORD interval)
+{//0.1초마다 실행되는 프로시져
+
+	RECT rt;
+	GetClientRect(hwnd, &rt);
+	int cx = rt.right;
+	int cy = rt.bottom;
+
+	COLORREF rtColor = RGB(GetRandColor(), GetRandColor(), GetRandColor());
+	static RECT rtRand;
+	rtRand.left = rand() % cx;
+	rtRand.top = rand() % cy;
+	rtRand.right = rand() % cx;
+	rtRand.bottom = rand() % cy;
+
+	PostMessage(hwnd, WM_RANDPAINT, rtColor, (WPARAM)& rtRand);//포스트메시지는 리턴하고, 디스패치가 보장되지않는다
+	//SendMessage(hwnd, WM_RANDPAINT, rtColor, (WPARAM)&rtRand);//센드는 프로시져를 직접호출하고 호출될때까지 기다리다가 디스패치 보장
+
+	//Sleep(2000);//스레드가 하나라, 칼라 바뀌는게 느려지면 포인트 움직이는 것등 다른 동작도 느려진다
+
+}
